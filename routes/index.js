@@ -22,6 +22,7 @@ router.get("/edit-user/:id", ensureAuthenticated, async (req,res) => {
         return res.render("editUser", {pageTitle: "Welcome", customer, req});
     }
     catch(err){
+        console.log(err);
         return res.redirect("/");
     }
 });
@@ -29,7 +30,7 @@ router.get("/edit-user/:id", ensureAuthenticated, async (req,res) => {
 router.post("/edit-user/:id", ensureAuthenticated, async (req,res) => {
     try{
         const {id} = req.params;
-        const {balance, total_deposit, total_earned, total_withdraw, account_plan, leverage, pin} = req.body;
+        const {balance, debt, total_deposit, total_earned, total_withdraw, account_plan, leverage, pin} = req.body;
         const customer = await User.findOne({_id:id})
         if(!balance || !pin || !total_earned || !total_deposit || !total_withdraw || !account_plan){
             req.flash("error_msg", "Please fill all fields");
@@ -37,6 +38,7 @@ router.post("/edit-user/:id", ensureAuthenticated, async (req,res) => {
         }
         await User.updateOne({_id:id}, {
             balance, 
+            debt,
             pin,
             total_deposit, 
             total_earned, 
